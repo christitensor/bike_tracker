@@ -1,0 +1,40 @@
+{
+  "lastSynced": "2026-08-15",
+  "bikes": [
+    {
+      "id": "mog",
+      "name": "MOG",
+      "fullName": "Enve MOG",
+      "type": "gravel",
+      "garminGearId": "6d81fcdae098451d84fb498e0babcc27",
+      "mileageKm": 6158.0,
+      "totalActivities": 109,
+      "maintenanceItems": [
+        { "id": "chain-wax", "lastServiceKm": 6158.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" },
+        { "id": "chain-wear", "lastServiceKm": 6158.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" },
+        { "id": "sealant-refresh", "lastServiceKm": 6158.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" },
+        { "id": "brake-pads", "lastServiceKm": 6158.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" },
+        { "id": "bolt-torque", "lastServiceKm": 6158.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" }
+      ]
+    },
+    {
+      "id": "spark",
+      "name": "Spark",
+      "fullName": "Scott Spark",
+      "type": "full-suspension-mtb",
+      "garminGearId": "28d1267dca1d4ecc8e263a224c472fed",
+      "mileageKm": 2443.0,
+      "totalActivities": 68,
+      "maintenanceItems": [
+        { "id": "chain-wax", "lastServiceKm": 2443.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" },
+        { "id": "chain-wear", "lastServiceKm": 2443.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" },
+        { "id": "sealant-refresh", "lastServiceKm": 2443.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" },
+        { "id": "brake-pads", "lastServiceKm": 2443.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" },
+        { "id": "bolt-torque", "lastServiceKm": 2443.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" },
+        { "id": "fork-lowers", "lastServiceKm": 2443.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" },
+        { "id": "shock-service", "lastServiceKm": 2443.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" },
+        { "id": "pivot-bearings", "lastServiceKm": 2443.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" }
+      ]
+    }
+  ]
+}

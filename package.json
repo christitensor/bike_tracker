@@ -1,0 +1,8 @@
+{
+  "name": "bike-tracker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node scripts/check-due.mjs"
+  }
+}
