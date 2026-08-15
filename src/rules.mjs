@@ -2,10 +2,15 @@
 // check-due script (Node). Keep this file dependency-free and ISO-date based
 // so it runs unmodified in either environment.
 
+// Intervals tuned for a high-desert climate (northern Utah / Wasatch
+// Front): hot dry summers dry out sealant faster, and dusty singletrack is
+// harder on suspension seals, pivot bearings, and brake pads than a wetter
+// climate. Winter road/commute riding on mag-chloride slush also warrants
+// an extra chain-wax pass outside the normal mileage cadence.
 export const MAINTENANCE_CATALOG = {
   'chain-wax': {
     label: 'Chain wax',
-    description: 'Strip and hot-wax the chain.',
+    description: 'Strip and hot-wax the chain. Also rewax after any ride through winter road slush/mag chloride, regardless of mileage.',
     intervalKm: 250,
   },
   'chain-wear': {
@@ -15,13 +20,13 @@ export const MAINTENANCE_CATALOG = {
   },
   'sealant-refresh': {
     label: 'Tubeless sealant refresh',
-    description: 'Top up or replace sealant in both tires.',
-    intervalDays: 90,
+    description: 'Top up or replace sealant in both tires. Shortened for dry-climate evaporation — check sooner if riding through peak summer heat.',
+    intervalDays: 60,
   },
   'brake-pads': {
     label: 'Brake pad inspection',
-    description: 'Check pad thickness and rotor wear.',
-    intervalKm: 1000,
+    description: 'Check pad thickness and rotor wear. Shortened for dusty-trail grit wear.',
+    intervalKm: 800,
   },
   'bolt-torque': {
     label: 'Safety bolt-torque check',
@@ -30,8 +35,8 @@ export const MAINTENANCE_CATALOG = {
   },
   'fork-lowers': {
     label: 'Fork lower leg service',
-    description: 'Clean and re-oil fork lower legs and seals.',
-    intervalKm: 800,
+    description: 'Clean and re-oil fork lower legs and seals. Shortened for dust ingress on dry singletrack.',
+    intervalKm: 600,
   },
   'shock-service': {
     label: 'Shock & fork full service',
@@ -40,8 +45,8 @@ export const MAINTENANCE_CATALOG = {
   },
   'pivot-bearings': {
     label: 'Pivot bearing check',
-    description: 'Inspect and regrease rear-suspension pivot bearings.',
-    intervalDays: 180,
+    description: 'Inspect and regrease rear-suspension pivot bearings. Shortened for grit ingress on dusty trails.',
+    intervalDays: 120,
   },
 };
 

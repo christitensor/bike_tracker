@@ -79,6 +79,12 @@ h1 {
   font-size: 0.875rem;
 }
 
+.bike-next {
+  margin: 0.35rem 0 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
 .item-list {
   list-style: none;
   margin: 0;

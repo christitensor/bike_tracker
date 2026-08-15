@@ -1,5 +1,10 @@
 import { computeBikeStatus } from './src/rules.mjs';
 
+// Fetched fresh on every load so the dashboard reflects the latest Garmin
+// sync without needing a redeploy — GitHub raw serves CORS-enabled JSON.
+const DATA_URL =
+  'https://raw.githubusercontent.com/christitensor/bike_tracker/claude/bike-maintenance-tracker-0s7qq4/data/bikes.json';
+
 const KM_TO_MI = 0.621371;
 
 function fmtMiles(km) {
@@ -39,11 +44,22 @@ function renderBike(bike, todayISO) {
     return rank[it.status] > rank[acc] ? it.status : acc;
   }, 'ok');
 
+  const mileageItems = evaluated.items.filter((it) => it.kmRemaining != null);
+  const nextUp = mileageItems.length
+    ? mileageItems.reduce((a, b) => (a.kmRemaining < b.kmRemaining ? a : b))
+    : null;
+  const nextUpText = nextUp
+    ? nextUp.kmRemaining >= 0
+      ? `${fmtMiles(nextUp.kmRemaining)} mi to ${nextUp.label}`
+      : `${fmtMiles(-nextUp.kmRemaining)} mi overdue for ${nextUp.label}`
+    : '';
+
   card.innerHTML = `
     <header class="bike-header">
       <div>
         <h2>${bike.name}</h2>
         <p class="bike-sub">${bike.fullName} · ${fmtMiles(bike.mileageKm)} mi · ${bike.totalActivities} rides</p>
+        ${nextUpText ? `<p class="bike-next">${nextUpText}</p>` : ''}
       </div>
       <span class="pill pill-${worst}">${statusLabel(worst)}</span>
     </header>
@@ -69,7 +85,7 @@ function renderBike(bike, todayISO) {
 }
 
 async function main() {
-  const res = await fetch('./data/bikes.json');
+  const res = await fetch(`${DATA_URL}?t=${Date.now()}`, { cache: 'no-store' });
   const data = await res.json();
   const today = new Date().toISOString().slice(0, 10);
 
