@@ -85,10 +85,14 @@ actually overdue *right now* (e.g. you haven't rewaxed the chain in 400 km),
 edit that item in `data/bikes.json` to reflect the real last-service point —
 otherwise the countdown starts from today.
 
-**Logging a completed service**: text the Telegram bot, e.g. "waxed the
-Spark chain" or "did brake pads on the mog" — see "Logging via Telegram"
-below. You can also just ask Claude in this repo's session directly, e.g.
-"mark chain wax done on the Spark."
+**Logging a completed service**: three ways —
+1. Tap "Log done →" next to any item on the dashboard. It deep-links into
+   Telegram with the right command pre-filled (e.g. `/wax mog`); you just
+   hit send.
+2. Text the bot directly — either a slash command (`/wax mog`) or free
+   text ("waxed the Spark chain"). See "Logging via Telegram" below.
+3. Ask Claude in this repo's session directly, e.g. "mark chain wax done
+   on the Spark."
 
 ## Automated Garmin sync + ping
 
@@ -123,30 +127,44 @@ daily sync, `trig_...` for the log listener — see `list_triggers`).
 
 ### Logging via Telegram
 
-A second Routine ("Bike maintenance log listener") polls the bot hourly
-for new messages and treats each one as a maintenance-log command:
+Type `/` in the chat to see the registered command menu (set via
+`setMyCommands`):
+
+| Command | Logs |
+|---|---|
+| `/wax <bike>` | Chain wax |
+| `/sealant <bike>` | Tubeless sealant refresh |
+| `/brakes <bike>` | Brake pad/rotor inspection |
+| `/chainwear <bike>` | Chain wear check |
+| `/bolts <bike>` | Safety bolt-torque check |
+| `/fork <bike>` | Fork lower leg service (Spark only) |
+| `/shock <bike>` | Shock & fork full service (Spark only) |
+| `/pivot <bike>` | Pivot bearing check (Spark only) |
+| `/status` | Current status of every item on both bikes, on demand |
+| `/help` | Lists commands and usage |
+
+`<bike>` is `mog` or `spark` (or `both` to log the same item on both
+bikes). Free text also works if you'd rather not use the menu — "waxed
+the Spark chain" is parsed the same as `/wax spark`.
+
+A Routine ("Bike maintenance log listener") polls the bot hourly and
+processes each new message:
 
 1. Fetches new messages via `getUpdates`, using an offset persisted in
    `data/telegram-offset.json` so each message is only processed once.
-2. For each message, matches it against a bike (MOG / Spark, or "both")
-   and a maintenance item from `MAINTENANCE_CATALOG` in `src/rules.mjs`
-   (e.g. "wax"/"waxed" → chain-wax, "sealant" → sealant-refresh, "brake
-   pads"/"rotors" → brake-pads, "chain wear"/"chain stretch" → chain-wear,
-   "fork" → fork-lowers, "shock"/"full suspension service" →
-   shock-service, "pivot"/"bearings" → pivot-bearings, "bolt"/"torque" →
-   bolt-torque). Free text is fine — "just waxed the gravel bike's chain"
-   works as well as "mog chain wax".
-3. On a confident match: refreshes that bike's mileage from Garmin, sets
-   the item's `lastServiceKm`/`lastServiceDate` to now, resets
-   `lastNotifiedStatus` to `ok`, commits and pushes, and replies on
-   Telegram confirming what was logged (e.g. "✅ Logged: MOG chain wax at
-   3,830 mi").
-4. On an ambiguous match (can't tell which bike, or no recognizable item):
-   replies asking for clarification instead of guessing, and doesn't touch
-   `bikes.json`.
-5. Messages that aren't maintenance-log commands at all are ignored
-   silently — the bot only replies to things it's confident are (or look
-   like an attempt at) a log entry.
+2. `/status` and `/help` just reply — no data changes.
+3. A recognized log command/phrase (slash command or free text, matched
+   against `MAINTENANCE_CATALOG` in `src/rules.mjs`): refreshes that
+   bike's mileage from Garmin, sets the item's `lastServiceKm`/
+   `lastServiceDate` to now, resets `lastNotifiedStatus` to `ok`, commits
+   and pushes, and replies confirming what was logged (e.g. "✅ Logged:
+   MOG chain wax at 3,830 mi").
+4. An ambiguous log attempt (can't tell which bike, or a Spark-only item
+   requested for MOG) gets a clarifying reply instead of a guess, and
+   `bikes.json` isn't touched.
+5. Anything that isn't a command or log attempt is ignored silently — the
+   bot only replies to things it's confident are (or look like an attempt
+   at) a command or log entry.
 
 Expect up to an hour of lag between texting the bot and seeing the
 dashboard/next-due countdown update, since it's polled hourly rather than

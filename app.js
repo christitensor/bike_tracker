@@ -5,6 +5,27 @@ import { computeBikeStatus } from './src/rules.mjs';
 const DATA_URL =
   'https://raw.githubusercontent.com/christitensor/bike_tracker/claude/bike-maintenance-tracker-0s7qq4/data/bikes.json';
 
+const TELEGRAM_BOT = 'bike_maintenance_tracker_bot';
+
+// Maps catalog item ids to the Telegram slash commands registered on the
+// bot (see README "Logging via Telegram").
+const ITEM_COMMAND = {
+  'chain-wax': 'wax',
+  'chain-wear': 'chainwear',
+  'sealant-refresh': 'sealant',
+  'brake-pads': 'brakes',
+  'bolt-torque': 'bolts',
+  'fork-lowers': 'fork',
+  'shock-service': 'shock',
+  'pivot-bearings': 'pivot',
+};
+
+function logLink(bikeId, itemId) {
+  const command = ITEM_COMMAND[itemId];
+  const text = encodeURIComponent(`/${command} ${bikeId}`);
+  return `https://t.me/${TELEGRAM_BOT}?text=${text}`;
+}
+
 const KM_TO_MI = 0.621371;
 
 function fmtMiles(km) {
@@ -77,7 +98,10 @@ function renderBike(bike, todayISO) {
       </div>
       <p class="item-desc">${item.description}</p>
       ${item.note ? `<p class="item-note">${item.note}</p>` : ''}
-      <p class="item-meta">${itemSubtext(item)}</p>
+      <div class="item-footer">
+        <p class="item-meta">${itemSubtext(item)}</p>
+        <a class="log-link" href="${logLink(bike.id, item.id)}" target="_blank" rel="noopener">Log done →</a>
+      </div>
     `;
     list.appendChild(li);
   }
