@@ -85,10 +85,10 @@ actually overdue *right now* (e.g. you haven't rewaxed the chain in 400 km),
 edit that item in `data/bikes.json` to reflect the real last-service point —
 otherwise the countdown starts from today.
 
-**Logging a completed service**: just ask Claude in this repo's session,
-e.g. "mark chain wax done on the Spark" — it'll update
-`lastServiceKm`/`lastServiceDate` (and reset `lastNotifiedStatus`) in
-`data/bikes.json` and commit it.
+**Logging a completed service**: text the Telegram bot, e.g. "waxed the
+Spark chain" or "did brake pads on the mog" — see "Logging via Telegram"
+below. You can also just ask Claude in this repo's session directly, e.g.
+"mark chain wax done on the Spark."
 
 ## Automated Garmin sync + ping
 
@@ -115,7 +115,39 @@ direct call to the Telegram Bot API instead of a connector tool. A bot
 messaged on the same due-item trigger as the email.
 
 The bot token and chat ID are **not** stored in this repo (it's public) —
-they live only in the daily sync Routine's own trigger configuration
-(`curl` call to `api.telegram.org`), which is private to the account that
-created it. If the bot ever needs to be rotated, generate a new token via
-BotFather and update the Routine's prompt (`trig_01V1nxS43Akd69nj611sguub`).
+they live only in the Routines' own trigger configuration (`curl` calls to
+`api.telegram.org`), which is private to the account that created them. If
+the bot ever needs to be rotated, generate a new token via BotFather and
+update both Routines' prompts (`trig_01V1nxS43Akd69nj611sguub` for the
+daily sync, `trig_...` for the log listener — see `list_triggers`).
+
+### Logging via Telegram
+
+A second Routine ("Bike maintenance log listener") polls the bot hourly
+for new messages and treats each one as a maintenance-log command:
+
+1. Fetches new messages via `getUpdates`, using an offset persisted in
+   `data/telegram-offset.json` so each message is only processed once.
+2. For each message, matches it against a bike (MOG / Spark, or "both")
+   and a maintenance item from `MAINTENANCE_CATALOG` in `src/rules.mjs`
+   (e.g. "wax"/"waxed" → chain-wax, "sealant" → sealant-refresh, "brake
+   pads"/"rotors" → brake-pads, "chain wear"/"chain stretch" → chain-wear,
+   "fork" → fork-lowers, "shock"/"full suspension service" →
+   shock-service, "pivot"/"bearings" → pivot-bearings, "bolt"/"torque" →
+   bolt-torque). Free text is fine — "just waxed the gravel bike's chain"
+   works as well as "mog chain wax".
+3. On a confident match: refreshes that bike's mileage from Garmin, sets
+   the item's `lastServiceKm`/`lastServiceDate` to now, resets
+   `lastNotifiedStatus` to `ok`, commits and pushes, and replies on
+   Telegram confirming what was logged (e.g. "✅ Logged: MOG chain wax at
+   3,830 mi").
+4. On an ambiguous match (can't tell which bike, or no recognizable item):
+   replies asking for clarification instead of guessing, and doesn't touch
+   `bikes.json`.
+5. Messages that aren't maintenance-log commands at all are ignored
+   silently — the bot only replies to things it's confident are (or look
+   like an attempt at) a log entry.
+
+Expect up to an hour of lag between texting the bot and seeing the
+dashboard/next-due countdown update, since it's polled hourly rather than
+via webhook.
