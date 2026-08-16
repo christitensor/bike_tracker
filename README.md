@@ -99,9 +99,9 @@ parts a static app can't do on its own:
    distance.
 2. Updates `mileageKm`/`totalActivities`/`lastSynced` in `data/bikes.json`.
 3. Runs `node scripts/check-due.mjs` to see what's newly due-soon/overdue.
-4. If anything is newly due, sends a summary via email (and Telegram, once
-   configured — see below) to Chris, then re-runs the check with `--ack` to
-   avoid re-notifying for the same status.
+4. If anything is newly due, sends a summary via email and Telegram (see
+   below) to Chris, then re-runs the check with `--ack` to avoid
+   re-notifying for the same status.
 5. Commits and pushes the updated `data/bikes.json`.
 
 This keeps Garmin credentials out of the app entirely — the sync only runs
@@ -110,14 +110,12 @@ inside a Claude Code session that already has the Garmin/Gmail connectors.
 ### Telegram
 
 No Telegram MCP connector exists in this Claude org, so pings go through a
-direct call to the Telegram Bot API instead. To enable it:
+direct call to the Telegram Bot API instead of a connector tool. A bot
+(`@bike_maintenance_tracker_bot`) was created via BotFather and is now
+messaged on the same due-item trigger as the email.
 
-1. Message [@BotFather](https://t.me/BotFather) on Telegram, run `/newbot`,
-   and save the bot token it gives you.
-2. Message your new bot once (anything), then visit
-   `https://api.telegram.org/bot<TOKEN>/getUpdates` to find your numeric
-   `chat.id`.
-3. Give Claude the token + chat ID; they get stored as env vars for the sync
-   session and the routine posts to
-   `https://api.telegram.org/bot<TOKEN>/sendMessage` on the same due-item
-   trigger as the email.
+The bot token and chat ID are **not** stored in this repo (it's public) —
+they live only in the daily sync Routine's own trigger configuration
+(`curl` call to `api.telegram.org`), which is private to the account that
+created it. If the bot ever needs to be rotated, generate a new token via
+BotFather and update the Routine's prompt (`trig_01V1nxS43Akd69nj611sguub`).
