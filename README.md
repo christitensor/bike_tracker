@@ -4,7 +4,7 @@ A tiny, dependency-free dashboard that tracks routine maintenance for your
 bikes, using mileage synced from Garmin Connect (via the Garmin gear feature)
 and pings you when something's due.
 
-**Live dashboard:** _deployed URL added here once published — see below._
+**Live dashboard:** https://bike-maintenance-tracker-tau.vercel.app/
 
 ## Bikes tracked
 
