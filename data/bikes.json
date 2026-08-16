@@ -18,11 +18,11 @@
         },
         {
           "id": "chain-wear",
-          "lastServiceKm": 5205.8,
-          "lastServiceDate": "2026-07-09",
-          "lastNotifiedStatus": "due-soon",
+          "lastServiceKm": 6158,
+          "lastServiceDate": "2026-08-16",
+          "lastNotifiedStatus": "ok",
           "intervalKmOverride": 1000,
-          "note": "Estimated ~50% worn at last check (2026-07-09) — check interval shortened from the standard 2000km to 1000km given faster-than-expected wear."
+          "note": "Rechecked 2026-08-16, in bounds. Interval stays shortened to 1000km (from 2000) since a previous check measured it ~50% worn faster than expected."
         },
         {
           "id": "sealant-refresh",
