@@ -117,6 +117,12 @@ h1 {
   font-size: 0.8rem;
 }
 
+.item-note {
+  margin: 0.25rem 0 0;
+  font-size: 0.78rem;
+  font-style: italic;
+}
+
 .item-meta {
   margin: 0.25rem 0 0;
   font-size: 0.78rem;

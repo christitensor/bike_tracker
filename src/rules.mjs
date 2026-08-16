@@ -65,29 +65,36 @@ function addDays(iso, days) {
 }
 
 // Computes the current status of a single maintenance item.
-// item: { id, lastServiceKm, lastServiceDate, lastNotifiedStatus }
+// item: { id, lastServiceKm, lastServiceDate, lastNotifiedStatus, note?,
+//         intervalKmOverride?, intervalDaysOverride? }
+// An item can override the catalog's interval for a specific bike/component
+// (e.g. a chain known to be wearing faster than usual) via
+// intervalKmOverride / intervalDaysOverride.
 // Returns null if the catalog entry is unknown.
 export function computeItemStatus(item, bikeMileageKm, todayISO) {
   const catalog = MAINTENANCE_CATALOG[item.id];
   if (!catalog) return null;
 
+  const intervalKm = item.intervalKmOverride ?? catalog.intervalKm;
+  const intervalDays = item.intervalDaysOverride ?? catalog.intervalDays;
+
   const ratios = [];
   const details = {};
 
-  if (catalog.intervalKm != null) {
+  if (intervalKm != null) {
     const kmSince = bikeMileageKm - item.lastServiceKm;
-    ratios.push(kmSince / catalog.intervalKm);
+    ratios.push(kmSince / intervalKm);
     details.kmSince = round1(kmSince);
-    details.kmRemaining = round1(catalog.intervalKm - kmSince);
-    details.dueAtKm = round1(item.lastServiceKm + catalog.intervalKm);
+    details.kmRemaining = round1(intervalKm - kmSince);
+    details.dueAtKm = round1(item.lastServiceKm + intervalKm);
   }
 
-  if (catalog.intervalDays != null) {
+  if (intervalDays != null) {
     const daysSince = daysBetween(item.lastServiceDate, todayISO);
-    ratios.push(daysSince / catalog.intervalDays);
+    ratios.push(daysSince / intervalDays);
     details.daysSince = daysSince;
-    details.daysRemaining = catalog.intervalDays - daysSince;
-    details.dueAtDate = addDays(item.lastServiceDate, catalog.intervalDays);
+    details.daysRemaining = intervalDays - daysSince;
+    details.dueAtDate = addDays(item.lastServiceDate, intervalDays);
   }
 
   const progress = Math.max(...ratios);
@@ -99,8 +106,9 @@ export function computeItemStatus(item, bikeMileageKm, todayISO) {
     id: item.id,
     label: catalog.label,
     description: catalog.description,
-    intervalKm: catalog.intervalKm ?? null,
-    intervalDays: catalog.intervalDays ?? null,
+    note: item.note ?? null,
+    intervalKm: intervalKm ?? null,
+    intervalDays: intervalDays ?? null,
     progress,
     status,
     worseningSinceLastNotified: STATUS_RANK[status] > STATUS_RANK[item.lastNotifiedStatus ?? 'ok'],

@@ -76,6 +76,7 @@ function renderBike(bike, todayISO) {
         <span class="pill pill-${item.status} pill-sm">${statusLabel(item.status)}</span>
       </div>
       <p class="item-desc">${item.description}</p>
+      ${item.note ? `<p class="item-note">${item.note}</p>` : ''}
       <p class="item-meta">${itemSubtext(item)}</p>
     `;
     list.appendChild(li);

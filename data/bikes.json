@@ -1,5 +1,5 @@
 {
-  "lastSynced": "2026-08-15",
+  "lastSynced": "2026-08-16",
   "bikes": [
     {
       "id": "mog",
@@ -7,14 +7,42 @@
       "fullName": "Enve MOG",
       "type": "gravel",
       "garminGearId": "6d81fcdae098451d84fb498e0babcc27",
-      "mileageKm": 6158.0,
+      "mileageKm": 6158,
       "totalActivities": 109,
       "maintenanceItems": [
-        { "id": "chain-wax", "lastServiceKm": 6158.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" },
-        { "id": "chain-wear", "lastServiceKm": 6158.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" },
-        { "id": "sealant-refresh", "lastServiceKm": 6158.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" },
-        { "id": "brake-pads", "lastServiceKm": 6158.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" },
-        { "id": "bolt-torque", "lastServiceKm": 6158.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" }
+        {
+          "id": "chain-wax",
+          "lastServiceKm": 6158,
+          "lastServiceDate": "2026-08-15",
+          "lastNotifiedStatus": "ok"
+        },
+        {
+          "id": "chain-wear",
+          "lastServiceKm": 5205.8,
+          "lastServiceDate": "2026-07-09",
+          "lastNotifiedStatus": "due-soon",
+          "intervalKmOverride": 1000,
+          "note": "Estimated ~50% worn at last check (2026-07-09) — check interval shortened from the standard 2000km to 1000km given faster-than-expected wear."
+        },
+        {
+          "id": "sealant-refresh",
+          "lastServiceKm": 6158,
+          "lastServiceDate": "2026-08-16",
+          "lastNotifiedStatus": "ok"
+        },
+        {
+          "id": "brake-pads",
+          "lastServiceKm": 6112.8,
+          "lastServiceDate": "2026-08-09",
+          "lastNotifiedStatus": "ok",
+          "note": "Pads replaced 2026-07-31; rotors serviced 2026-08-09 — baseline set to the later (rotor) date."
+        },
+        {
+          "id": "bolt-torque",
+          "lastServiceKm": 6158,
+          "lastServiceDate": "2026-08-15",
+          "lastNotifiedStatus": "ok"
+        }
       ]
     },
     {
@@ -23,17 +51,57 @@
       "fullName": "Scott Spark",
       "type": "full-suspension-mtb",
       "garminGearId": "28d1267dca1d4ecc8e263a224c472fed",
-      "mileageKm": 2443.0,
+      "mileageKm": 2443,
       "totalActivities": 68,
       "maintenanceItems": [
-        { "id": "chain-wax", "lastServiceKm": 2443.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" },
-        { "id": "chain-wear", "lastServiceKm": 2443.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" },
-        { "id": "sealant-refresh", "lastServiceKm": 2443.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" },
-        { "id": "brake-pads", "lastServiceKm": 2443.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" },
-        { "id": "bolt-torque", "lastServiceKm": 2443.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" },
-        { "id": "fork-lowers", "lastServiceKm": 2443.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" },
-        { "id": "shock-service", "lastServiceKm": 2443.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" },
-        { "id": "pivot-bearings", "lastServiceKm": 2443.0, "lastServiceDate": "2026-08-15", "lastNotifiedStatus": "ok" }
+        {
+          "id": "chain-wax",
+          "lastServiceKm": 2404.3,
+          "lastServiceDate": "2026-08-13",
+          "lastNotifiedStatus": "ok"
+        },
+        {
+          "id": "chain-wear",
+          "lastServiceKm": 2443,
+          "lastServiceDate": "2026-08-15",
+          "lastNotifiedStatus": "ok"
+        },
+        {
+          "id": "sealant-refresh",
+          "lastServiceKm": 2443,
+          "lastServiceDate": "2026-08-16",
+          "lastNotifiedStatus": "ok"
+        },
+        {
+          "id": "brake-pads",
+          "lastServiceKm": 1612.4,
+          "lastServiceDate": "2026-03-28",
+          "lastNotifiedStatus": "overdue"
+        },
+        {
+          "id": "bolt-torque",
+          "lastServiceKm": 2443,
+          "lastServiceDate": "2026-08-15",
+          "lastNotifiedStatus": "ok"
+        },
+        {
+          "id": "fork-lowers",
+          "lastServiceKm": 1612.4,
+          "lastServiceDate": "2026-03-28",
+          "lastNotifiedStatus": "overdue"
+        },
+        {
+          "id": "shock-service",
+          "lastServiceKm": 1612.4,
+          "lastServiceDate": "2026-03-28",
+          "lastNotifiedStatus": "ok"
+        },
+        {
+          "id": "pivot-bearings",
+          "lastServiceKm": 2443,
+          "lastServiceDate": "2026-08-15",
+          "lastNotifiedStatus": "ok"
+        }
       ]
     }
   ]
