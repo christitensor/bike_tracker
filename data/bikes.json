@@ -1,5 +1,5 @@
 {
-  "lastSynced": "2026-08-17",
+  "lastSynced": "2026-08-18",
   "bikes": [
     {
       "id": "mog",
@@ -12,8 +12,8 @@
       "maintenanceItems": [
         {
           "id": "chain-wax",
-          "lastServiceKm": 6158,
-          "lastServiceDate": "2026-08-15",
+          "lastServiceKm": 6299.1,
+          "lastServiceDate": "2026-08-18",
           "lastNotifiedStatus": "ok"
         },
         {
