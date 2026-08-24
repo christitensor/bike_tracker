@@ -109,17 +109,35 @@ function renderBike(bike, todayISO) {
   return card;
 }
 
-async function main() {
-  const res = await fetch(`${DATA_URL}?t=${Date.now()}`, { cache: 'no-store' });
-  const data = await res.json();
-  const today = new Date().toISOString().slice(0, 10);
+async function loadAndRender() {
+  try {
+    const res = await fetch(`${DATA_URL}?t=${Date.now()}`, { cache: 'no-store' });
+    const data = await res.json();
+    const today = new Date().toISOString().slice(0, 10);
 
-  document.getElementById('last-synced').textContent = `Last synced from Garmin: ${data.lastSynced}`;
+    document.getElementById('last-synced').textContent = `Last synced from Garmin: ${data.lastSynced}`;
 
-  const root = document.getElementById('bikes');
-  for (const bike of data.bikes) {
-    root.appendChild(renderBike(bike, today));
+    const root = document.getElementById('bikes');
+    root.innerHTML = '';
+    for (const bike of data.bikes) {
+      root.appendChild(renderBike(bike, today));
+    }
+  } catch (err) {
+    console.error('Failed to load data:', err);
+    document.getElementById('last-synced').textContent = 'Error loading data';
   }
 }
 
-main();
+function initRefreshButton() {
+  const btn = document.getElementById('refresh-btn');
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+    await loadAndRender();
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  });
+}
+
+loadAndRender();
+initRefreshButton();

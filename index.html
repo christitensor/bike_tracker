@@ -8,8 +8,13 @@
 </head>
 <body>
   <div class="page">
-    <h1>Bike Maintenance Tracker</h1>
-    <p id="last-synced">Loading…</p>
+    <div class="header-row">
+      <div>
+        <h1>Bike Maintenance Tracker</h1>
+        <p id="last-synced">Loading…</p>
+      </div>
+      <button id="refresh-btn" aria-label="Refresh data">↻</button>
+    </div>
     <div id="bikes"></div>
   </div>
   <script type="module" src="./app.js"></script>
