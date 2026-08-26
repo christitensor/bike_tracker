@@ -5,27 +5,6 @@ import { computeBikeStatus } from './src/rules.mjs';
 const DATA_URL =
   'https://raw.githubusercontent.com/christitensor/bike_tracker/claude/bike-maintenance-tracker-0s7qq4/data/bikes.json';
 
-const TELEGRAM_BOT = 'bike_maintenance_tracker_bot';
-
-// Maps catalog item ids to the Telegram slash commands registered on the
-// bot (see README "Logging via Telegram").
-const ITEM_COMMAND = {
-  'chain-wax': 'wax',
-  'chain-wear': 'chainwear',
-  'sealant-refresh': 'sealant',
-  'brake-pads': 'brakes',
-  'bolt-torque': 'bolts',
-  'fork-lowers': 'fork',
-  'shock-service': 'shock',
-  'pivot-bearings': 'pivot',
-};
-
-function logLink(bikeId, itemId) {
-  const command = ITEM_COMMAND[itemId];
-  const text = encodeURIComponent(`/${command} ${bikeId}`);
-  return `https://t.me/${TELEGRAM_BOT}?text=${text}`;
-}
-
 const KM_TO_MI = 0.621371;
 
 function fmtMiles(km) {
@@ -100,7 +79,7 @@ function renderBike(bike, todayISO) {
       ${item.note ? `<p class="item-note">${item.note}</p>` : ''}
       <div class="item-footer">
         <p class="item-meta">${itemSubtext(item)}</p>
-        <a class="log-link" href="${logLink(bike.id, item.id)}" target="_blank" rel="noopener">Log done →</a>
+        <button class="log-btn" data-bike="${bike.id}" data-item="${item.id}">Log done</button>
       </div>
     `;
     list.appendChild(li);
@@ -109,19 +88,21 @@ function renderBike(bike, todayISO) {
   return card;
 }
 
+function renderAll(data) {
+  const today = new Date().toISOString().slice(0, 10);
+  document.getElementById('last-synced').textContent = `Last synced from Garmin: ${data.lastSynced}`;
+  const root = document.getElementById('bikes');
+  root.innerHTML = '';
+  for (const bike of data.bikes) {
+    root.appendChild(renderBike(bike, today));
+  }
+}
+
 async function loadAndRender() {
   try {
     const res = await fetch(`${DATA_URL}?t=${Date.now()}`, { cache: 'no-store' });
     const data = await res.json();
-    const today = new Date().toISOString().slice(0, 10);
-
-    document.getElementById('last-synced').textContent = `Last synced from Garmin: ${data.lastSynced}`;
-
-    const root = document.getElementById('bikes');
-    root.innerHTML = '';
-    for (const bike of data.bikes) {
-      root.appendChild(renderBike(bike, today));
-    }
+    renderAll(data);
   } catch (err) {
     console.error('Failed to load data:', err);
     document.getElementById('last-synced').textContent = 'Error loading data';
@@ -139,5 +120,33 @@ function initRefreshButton() {
   });
 }
 
+async function handleLogClick(btn) {
+  const { bike: bikeId, item: itemId } = btn.dataset;
+  btn.disabled = true;
+  btn.textContent = 'Logging…';
+  try {
+    const res = await fetch('/api/log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ bikeId, itemId }),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || `Request failed (${res.status})`);
+    renderAll(json.data);
+  } catch (err) {
+    console.error('Failed to log item:', err);
+    btn.textContent = 'Failed — tap to retry';
+    btn.disabled = false;
+  }
+}
+
+function initLogButtons() {
+  document.getElementById('bikes').addEventListener('click', (e) => {
+    const btn = e.target.closest('.log-btn');
+    if (btn) handleLogClick(btn);
+  });
+}
+
 loadAndRender();
 initRefreshButton();
+initLogButtons();

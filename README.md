@@ -86,9 +86,9 @@ edit that item in `data/bikes.json` to reflect the real last-service point —
 otherwise the countdown starts from today.
 
 **Logging a completed service**: three ways —
-1. Tap "Log done →" next to any item on the dashboard. It deep-links into
-   Telegram with the right command pre-filled (e.g. `/wax mog`); you just
-   hit send.
+1. Tap "Log done" next to any item on the dashboard. It calls the `/api/log`
+   Vercel function, which commits the update to `data/bikes.json` straight
+   from the browser — no other app needed.
 2. Text the bot directly — either a slash command (`/wax mog`) or free
    text ("waxed the Spark chain"). See "Logging via Telegram" below.
 3. Ask Claude in this repo's session directly, e.g. "mark chain wax done
@@ -103,9 +103,9 @@ parts a static app can't do on its own:
    distance.
 2. Updates `mileageKm`/`totalActivities`/`lastSynced` in `data/bikes.json`.
 3. Runs `node scripts/check-due.mjs` to see what's newly due-soon/overdue.
-4. If anything is newly due, sends a summary via email and Telegram (see
-   below) to Chris, then re-runs the check with `--ack` to avoid
-   re-notifying for the same status.
+4. If anything is newly due, sends a summary via Telegram (see below) to
+   Chris, then re-runs the check with `--ack` to avoid re-notifying for the
+   same status.
 5. Commits and pushes the updated `data/bikes.json`.
 
 This keeps Garmin credentials out of the app entirely — the sync only runs
@@ -169,3 +169,21 @@ processes each new message:
 Expect up to an hour of lag between texting the bot and seeing the
 dashboard/next-due countdown update, since it's polled hourly rather than
 via webhook.
+
+## In-app logging (`/api/log`)
+
+The "Log done" button on the dashboard calls a Vercel serverless function
+(`api/log.js`) instead of bouncing through Telegram. Given `{ bikeId,
+itemId }`, it reads `data/bikes.json` via the GitHub Contents API, sets that
+item's `lastServiceKm` to the bike's current `mileageKm`, `lastServiceDate`
+to today, and `lastNotifiedStatus` to `ok`, then commits and pushes the
+change directly to the `claude/bike-maintenance-tracker-0s7qq4` branch. The
+response includes the updated data so the dashboard re-renders immediately
+without waiting on raw.githubusercontent.com's cache.
+
+This requires a `GITHUB_TOKEN` environment variable in the Vercel
+project (Settings → Environment Variables) — a GitHub token scoped to
+contents:write on this repo. It's never exposed to the browser; only the
+serverless function reads it. If logging starts failing with a 500 error
+mentioning `GITHUB_TOKEN`, the token is missing or expired and needs to be
+regenerated and reset there.
