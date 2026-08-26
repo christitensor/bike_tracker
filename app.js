@@ -98,10 +98,89 @@ function renderAll(data) {
   }
 }
 
+// After a successful /api/log, raw.githubusercontent.com can take a few
+// seconds to reflect the new commit. Remember what we just wrote so the
+// next fetch (manual refresh or a fresh page load) can tell a stale read
+// apart from a real one and retry instead of flashing the old status.
+const PENDING_LOG_KEY = 'bikeTracker.pendingLog';
+const PENDING_LOG_MAX_AGE_MS = 3 * 60 * 1000;
+const RETRY_DELAYS_MS = [800, 1500, 2500, 4000];
+
+function rememberPendingLog(bikeId, itemId, item) {
+  try {
+    localStorage.setItem(
+      PENDING_LOG_KEY,
+      JSON.stringify({
+        bikeId,
+        itemId,
+        expected: { lastServiceKm: item.lastServiceKm, lastServiceDate: item.lastServiceDate },
+        at: Date.now(),
+      })
+    );
+  } catch {
+    // localStorage unavailable (private mode, etc.) — retries just won't kick in.
+  }
+}
+
+function readPendingLog() {
+  try {
+    const raw = localStorage.getItem(PENDING_LOG_KEY);
+    if (!raw) return null;
+    const marker = JSON.parse(raw);
+    if (Date.now() - marker.at > PENDING_LOG_MAX_AGE_MS) {
+      localStorage.removeItem(PENDING_LOG_KEY);
+      return null;
+    }
+    return marker;
+  } catch {
+    return null;
+  }
+}
+
+function clearPendingLog() {
+  try {
+    localStorage.removeItem(PENDING_LOG_KEY);
+  } catch {
+    // ignore
+  }
+}
+
+function dataReflectsPendingLog(data, marker) {
+  const bike = data.bikes.find((b) => b.id === marker.bikeId);
+  const item = bike?.maintenanceItems.find((i) => i.id === marker.itemId);
+  return (
+    !!item &&
+    item.lastServiceKm === marker.expected.lastServiceKm &&
+    item.lastServiceDate === marker.expected.lastServiceDate
+  );
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function fetchBikesData() {
+  const res = await fetch(`${DATA_URL}?t=${Date.now()}`, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`Request failed (${res.status})`);
+  return res.json();
+}
+
 async function loadAndRender() {
   try {
-    const res = await fetch(`${DATA_URL}?t=${Date.now()}`, { cache: 'no-store' });
-    const data = await res.json();
+    let data = await fetchBikesData();
+
+    const marker = readPendingLog();
+    if (marker && !dataReflectsPendingLog(data, marker)) {
+      for (const delay of RETRY_DELAYS_MS) {
+        await sleep(delay);
+        data = await fetchBikesData();
+        if (dataReflectsPendingLog(data, marker)) break;
+      }
+    }
+    if (marker && dataReflectsPendingLog(data, marker)) {
+      clearPendingLog();
+    }
+
     renderAll(data);
   } catch (err) {
     console.error('Failed to load data:', err);
@@ -132,6 +211,9 @@ async function handleLogClick(btn) {
     });
     const json = await res.json();
     if (!res.ok) throw new Error(json.error || `Request failed (${res.status})`);
+    const loggedBike = json.data.bikes.find((b) => b.id === bikeId);
+    const loggedItem = loggedBike?.maintenanceItems.find((i) => i.id === itemId);
+    if (loggedItem) rememberPendingLog(bikeId, itemId, loggedItem);
     renderAll(json.data);
   } catch (err) {
     console.error('Failed to log item:', err);
