@@ -7,7 +7,7 @@
       "fullName": "Enve MOG",
       "type": "gravel",
       "garminGearId": "6d81fcdae098451d84fb498e0babcc27",
-      "mileageKm": 6633.0,
+      "mileageKm": 6633,
       "totalActivities": 119,
       "maintenanceItems": [
         {
@@ -56,8 +56,8 @@
       "maintenanceItems": [
         {
           "id": "chain-wax",
-          "lastServiceKm": 2404.3,
-          "lastServiceDate": "2026-08-13",
+          "lastServiceKm": 2561.3,
+          "lastServiceDate": "2026-09-02",
           "lastNotifiedStatus": "ok"
         },
         {
