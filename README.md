@@ -99,7 +99,7 @@ otherwise the countdown starts from today.
 A daily Routine (Claude Code scheduled trigger, 2pm UTC / ~7am MT) does the
 parts a static app can't do on its own:
 
-1. Calls the Garmin MCP `get_gear` tool to pull each bike's current total
+1. Calls the Garmin v2 MCP `get_gear` tool to pull each bike's current total
    distance.
 2. Updates `mileageKm`/`totalActivities`/`lastSynced` in `data/bikes.json`.
 3. Runs `node scripts/check-due.mjs` to see what's newly due-soon/overdue.
@@ -109,7 +109,7 @@ parts a static app can't do on its own:
 5. Commits and pushes the updated `data/bikes.json`.
 
 This keeps Garmin credentials out of the app entirely — the sync only runs
-inside a Claude Code session that already has the Garmin/Gmail connectors.
+inside a Claude Code session that already has the Garmin v2/Gmail connectors.
 
 ### Telegram
 
