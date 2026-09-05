@@ -1,0 +1,45 @@
+{
+  "bikes": [
+    {
+      "id": "spark",
+      "name": "Spark",
+      "fullName": "Scott Spark 920 TR",
+      "year": 2024,
+      "model": "920 TR",
+      "type": "Full-suspension MTB",
+      "geometry": [
+        { "label": "Frame size", "value": "L" }
+      ],
+      "build": [
+        { "category": "Wheels", "spec": "Enve AM30", "note": "Upgraded from stock" },
+        { "category": "Tires", "spec": "Continental Dubnital 2.4″ (f/r)", "note": "Upgraded from stock" },
+        { "category": "Handlebar", "spec": "Enve M5", "note": "Upgraded from stock" },
+        { "category": "Crankset", "spec": "SRAM GX Eagle, left-arm power meter", "note": "Upgraded from stock" }
+      ]
+    },
+    {
+      "id": "mog",
+      "name": "MOG",
+      "fullName": "Enve MOG",
+      "type": "Gravel",
+      "geometry": [
+        { "label": "Frame size", "value": "56" }
+      ],
+      "build": [
+        { "category": "Handlebar/Stem", "spec": "Enve one-piece bar/stem, 44mm bar / 90mm stem" },
+        { "category": "Tires — front", "spec": "Continental Dubnital 2.2″" },
+        { "category": "Tires — rear", "spec": "Continental Race King 2.2″" },
+        { "category": "Saddle", "spec": "Fizik Vento Argo R3 Adaptive" },
+        { "category": "Drivetrain", "spec": "SRAM Force 1x XPLR AXS" },
+        { "category": "Crankset", "spec": "SRAM Force 1x XPLR AXS power meter, 172.5mm, 46T (X-Sync Redforce Gy chainring)" },
+        { "category": "Cassette", "spec": "SRAM GX Eagle T-Type XS-1275, 12-speed, 10-52T" },
+        { "category": "Rear derailleur", "spec": "SRAM GX Eagle T-Type AXS, 12-speed" },
+        { "category": "Shift/brake levers", "spec": "SRAM Force eTap AXS HRD, flat mount" },
+        { "category": "Dropper post", "spec": "RockShox Reverb AXS XPLR, 27.2mm x 75mm" },
+        { "category": "Rotors", "spec": "SRAM Paceline, 160mm centerlock" },
+        { "category": "Bottom bracket", "spec": "SRAM DUB Wide T47, 85.5mm" }
+      ],
+      "note": "Drivetrain detail from the BE Bikes build quote attached to issue #1."
+    }
+  ]
+}

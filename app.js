@@ -5,6 +5,11 @@ import { computeBikeStatus } from './src/rules.mjs';
 const DATA_URL =
   'https://raw.githubusercontent.com/christitensor/bike_tracker/claude/bike-maintenance-tracker-0s7qq4/data/bikes.json';
 
+// Build/geo info changes rarely (only when a component gets swapped), so
+// this is served straight from the repo instead of GitHub raw — no live
+// sync needed, just a normal deploy when it's edited.
+const BIKE_INFO_URL = './data/bike-info.json';
+
 const KM_TO_MI = 0.621371;
 
 function fmtMiles(km) {
@@ -86,6 +91,77 @@ function renderBike(bike, todayISO) {
   }
 
   return card;
+}
+
+function renderBikeInfo(bike) {
+  const card = document.createElement('section');
+  card.className = 'bike-card';
+
+  const geoRows = (bike.geometry ?? [])
+    .map((g) => `<div class="spec-row"><span class="spec-label">${g.label}</span><span class="spec-value">${g.value}</span></div>`)
+    .join('');
+
+  card.innerHTML = `
+    <header class="bike-header">
+      <div>
+        <h2>${bike.name}</h2>
+        <p class="bike-sub">${bike.fullName}${bike.year ? ` · ${bike.year}` : ''}${bike.type ? ` · ${bike.type}` : ''}</p>
+      </div>
+    </header>
+    ${geoRows ? `<div class="spec-group"><h3 class="spec-heading">Geometry</h3><div class="spec-list">${geoRows}</div></div>` : ''}
+    <div class="spec-group">
+      <h3 class="spec-heading">Build</h3>
+      <ul class="build-list"></ul>
+    </div>
+    ${bike.note ? `<p class="item-note">${bike.note}</p>` : ''}
+  `;
+
+  const buildList = card.querySelector('.build-list');
+  for (const part of bike.build ?? []) {
+    const li = document.createElement('li');
+    li.className = 'build-item';
+    li.innerHTML = `
+      <span class="build-category">${part.category}</span>
+      <span class="build-spec">${part.spec}</span>
+      ${part.note ? `<span class="build-note">${part.note}</span>` : ''}
+    `;
+    buildList.appendChild(li);
+  }
+
+  return card;
+}
+
+function renderAllBikeInfo(data) {
+  const root = document.getElementById('bike-info');
+  root.innerHTML = '';
+  for (const bike of data.bikes) {
+    root.appendChild(renderBikeInfo(bike));
+  }
+}
+
+async function loadBikeInfo() {
+  try {
+    const res = await fetch(BIKE_INFO_URL);
+    if (!res.ok) throw new Error(`Request failed (${res.status})`);
+    renderAllBikeInfo(await res.json());
+  } catch (err) {
+    console.error('Failed to load bike info:', err);
+    document.getElementById('bike-info').textContent = 'Error loading bike info';
+  }
+}
+
+function initTabs() {
+  const buttons = document.querySelectorAll('.tab-btn');
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      buttons.forEach((b) => {
+        b.classList.toggle('active', b === btn);
+        b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+      });
+      document.getElementById('maintenance-panel').hidden = btn.dataset.tab !== 'maintenance';
+      document.getElementById('bike-info-panel').hidden = btn.dataset.tab !== 'bike-info';
+    });
+  });
 }
 
 function renderAll(data) {
@@ -232,3 +308,5 @@ function initLogButtons() {
 loadAndRender();
 initRefreshButton();
 initLogButtons();
+loadBikeInfo();
+initTabs();

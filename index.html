@@ -19,7 +19,16 @@
       </div>
       <button id="refresh-btn" aria-label="Refresh data">↻</button>
     </div>
-    <div id="bikes"></div>
+    <nav class="tabs" role="tablist">
+      <button class="tab-btn active" data-tab="maintenance" role="tab" aria-selected="true" id="tab-maintenance">Maintenance</button>
+      <button class="tab-btn" data-tab="bike-info" role="tab" aria-selected="false" id="tab-bike-info">Bike Info</button>
+    </nav>
+    <div id="maintenance-panel" class="tab-panel" role="tabpanel" aria-labelledby="tab-maintenance">
+      <div id="bikes"></div>
+    </div>
+    <div id="bike-info-panel" class="tab-panel" role="tabpanel" aria-labelledby="tab-bike-info" hidden>
+      <div id="bike-info"></div>
+    </div>
   </div>
   <script type="module" src="./app.js"></script>
 </body>
