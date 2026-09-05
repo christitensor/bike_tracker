@@ -1,5 +1,5 @@
 {
-  "lastSynced": "2026-09-03",
+  "lastSynced": "2026-09-05",
   "bikes": [
     {
       "id": "mog",
@@ -7,8 +7,8 @@
       "fullName": "Enve MOG",
       "type": "gravel",
       "garminGearId": "6d81fcdae098451d84fb498e0babcc27",
-      "mileageKm": 6707.2,
-      "totalActivities": 120,
+      "mileageKm": 6841.7,
+      "totalActivities": 122,
       "maintenanceItems": [
         {
           "id": "chain-wax",
@@ -34,7 +34,7 @@
           "id": "brake-pads",
           "lastServiceKm": 6112.8,
           "lastServiceDate": "2026-08-09",
-          "lastNotifiedStatus": "ok",
+          "lastNotifiedStatus": "due-soon",
           "note": "Pads replaced 2026-07-31; rotors serviced 2026-08-09 — baseline set to the later (rotor) date."
         },
         {
