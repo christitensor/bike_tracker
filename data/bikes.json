@@ -1,5 +1,5 @@
 {
-  "lastSynced": "2026-09-08",
+  "lastSynced": "2026-09-09",
   "bikes": [
     {
       "id": "mog",
@@ -7,8 +7,8 @@
       "fullName": "Enve MOG",
       "type": "gravel",
       "garminGearId": "6d81fcdae098451d84fb498e0babcc27",
-      "mileageKm": 7007.9,
-      "totalActivities": 124,
+      "mileageKm": 7082.4,
+      "totalActivities": 125,
       "maintenanceItems": [
         {
           "id": "chain-wax",
@@ -20,7 +20,7 @@
           "id": "chain-wear",
           "lastServiceKm": 6158,
           "lastServiceDate": "2026-08-16",
-          "lastNotifiedStatus": "ok",
+          "lastNotifiedStatus": "due-soon",
           "intervalKmOverride": 1000,
           "note": "Rechecked 2026-08-16, in bounds. Interval stays shortened to 1000km (from 2000) since a previous check measured it ~50% worn faster than expected."
         },
