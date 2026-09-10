@@ -32,9 +32,9 @@
         },
         {
           "id": "brake-pads",
-          "lastServiceKm": 6112.8,
-          "lastServiceDate": "2026-08-09",
-          "lastNotifiedStatus": "overdue",
+          "lastServiceKm": 7082.4,
+          "lastServiceDate": "2026-09-10",
+          "lastNotifiedStatus": "ok",
           "note": "Pads replaced 2026-07-31; rotors serviced 2026-08-09 — baseline set to the later (rotor) date."
         },
         {
