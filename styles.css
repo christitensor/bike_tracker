@@ -271,6 +271,16 @@ h1 {
   text-align: right;
 }
 
+.geo-note {
+  margin: 0.6rem 0 0;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.geo-note a {
+  color: var(--link);
+}
+
 .build-list {
   list-style: none;
   margin: 0;

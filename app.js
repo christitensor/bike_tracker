@@ -108,7 +108,7 @@ function renderBikeInfo(bike) {
         <p class="bike-sub">${bike.fullName}${bike.year ? ` · ${bike.year}` : ''}${bike.type ? ` · ${bike.type}` : ''}</p>
       </div>
     </header>
-    ${geoRows ? `<div class="spec-group"><h3 class="spec-heading">Geometry</h3><div class="spec-list">${geoRows}</div></div>` : ''}
+    ${geoRows ? `<div class="spec-group"><h3 class="spec-heading">Geometry</h3><div class="spec-list">${geoRows}</div>${bike.geometryNote ? `<p class="geo-note">${bike.geometryNote}</p>` : ''}</div>` : ''}
     <div class="spec-group">
       <h3 class="spec-heading">Build</h3>
       <ul class="build-list"></ul>
