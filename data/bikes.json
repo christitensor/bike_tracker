@@ -1,5 +1,5 @@
 {
-  "lastSynced": "2026-09-14",
+  "lastSynced": "2026-09-21",
   "bikes": [
     {
       "id": "mog",
@@ -7,8 +7,8 @@
       "fullName": "Enve MOG",
       "type": "gravel",
       "garminGearId": "6d81fcdae098451d84fb498e0babcc27",
-      "mileageKm": 7407.1,
-      "totalActivities": 126,
+      "mileageKm": 7602.5,
+      "totalActivities": 130,
       "maintenanceItems": [
         {
           "id": "chain-wax",
@@ -51,8 +51,8 @@
       "fullName": "Scott Spark",
       "type": "full-suspension-mtb",
       "garminGearId": "28d1267dca1d4ecc8e263a224c472fed",
-      "mileageKm": 2561.3,
-      "totalActivities": 70,
+      "mileageKm": 2620.9,
+      "totalActivities": 72,
       "maintenanceItems": [
         {
           "id": "chain-wax",
