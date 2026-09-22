@@ -74,9 +74,9 @@
         },
         {
           "id": "brake-pads",
-          "lastServiceKm": 1612.4,
-          "lastServiceDate": "2026-03-28",
-          "lastNotifiedStatus": "overdue"
+          "lastServiceKm": 2620.9,
+          "lastServiceDate": "2026-09-22",
+          "lastNotifiedStatus": "ok"
         },
         {
           "id": "bolt-torque",
