@@ -1,5 +1,5 @@
 {
-  "lastSynced": "2026-09-27",
+  "lastSynced": "2026-09-28",
   "bikes": [
     {
       "id": "mog",
@@ -7,8 +7,8 @@
       "fullName": "Enve MOG",
       "type": "gravel",
       "garminGearId": "6d81fcdae098451d84fb498e0babcc27",
-      "mileageKm": 7630.4,
-      "totalActivities": 131,
+      "mileageKm": 7695.4,
+      "totalActivities": 132,
       "maintenanceItems": [
         {
           "id": "chain-wax",
