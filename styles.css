@@ -36,6 +36,8 @@ body {
   background: var(--bg);
   color: var(--text);
   padding: 2rem 1rem 4rem;
+  padding: max(2rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right))
+    max(4rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
 }
 
 .page {
@@ -154,6 +156,21 @@ h1 {
   padding: 0;
   display: grid;
   gap: 0.6rem;
+}
+
+/* Two columns of checklist items once there's room — e.g. the iPhone Duo's
+   unfolded inner display (~626–669px wide) — instead of one stretched list. */
+@media (min-width: 600px) {
+  .item-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .item {
+    display: flex;
+    flex-direction: column;
+  }
+  .item .item-footer {
+    margin-top: auto;
+  }
 }
 
 .item {
