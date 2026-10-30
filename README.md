@@ -125,6 +125,12 @@ the bot ever needs to be rotated, generate a new token via BotFather and
 update both Routines' prompts (`trig_01V1nxS43Akd69nj611sguub` for the
 daily sync, `trig_...` for the log listener — see `list_triggers`).
 
+The log listener's handling lives entirely in that Routine's prompt, not in
+this repo. It must only act on updates whose `message.chat.id` equals
+Chris's chat ID (kept in the Routine config alongside the token) and ignore
+everything else — anyone on Telegram can message the bot, so without that
+check a stranger could log service entries.
+
 ### Logging via Telegram
 
 Type `/` in the chat to see the registered command menu (set via
@@ -181,9 +187,24 @@ change directly to the `claude/bike-maintenance-tracker-0s7qq4` branch. The
 response includes the updated data so the dashboard re-renders immediately
 without waiting on raw.githubusercontent.com's cache.
 
-This requires a `GITHUB_TOKEN` environment variable in the Vercel
-project (Settings → Environment Variables) — a GitHub token scoped to
-contents:write on this repo. It's never exposed to the browser; only the
-serverless function reads it. If logging starts failing with a 500 error
-mentioning `GITHUB_TOKEN`, the token is missing or expired and needs to be
-regenerated and reset there.
+This requires two environment variables in the Vercel project (Settings →
+Environment Variables). Neither is ever exposed to the browser; only the
+serverless function reads them.
+
+| Variable | Purpose |
+|---|---|
+| `GITHUB_TOKEN` | GitHub token scoped to contents:write on this repo, used to commit the update. |
+| `LOG_PASSPHRASE` | Shared secret that gates `/api/log`. Every request must send it in the `x-log-key` header; it's compared in constant time. **If it's unset, every log request is refused** (fail closed). Pick a long random string. |
+
+The first time you tap "Log done" in a browser, the dashboard asks for the
+passphrase and remembers it in that browser's `localStorage`. If the server
+rejects it (401 — e.g. after you rotate `LOG_PASSPHRASE`), the stored value
+is cleared and you're asked again. To rotate, change `LOG_PASSPHRASE` in
+Vercel and redeploy; each browser re-prompts on its next log.
+
+The function only accepts known bike ids (`mog`, `spark`) and maintenance
+item ids from `MAINTENANCE_CATALOG` — update the allowlists at the top of
+`api/log.js` if you add a bike or item. Error details (including GitHub API
+responses) are written to the Vercel function logs, not returned to the
+browser; if logging starts failing with a generic 500/502, check those logs
+— a missing or expired `GITHUB_TOKEN` is the usual cause.
