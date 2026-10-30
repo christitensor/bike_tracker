@@ -12,6 +12,56 @@ const BIKE_INFO_URL = './data/bike-info.json';
 
 const KM_TO_MI = 0.621371;
 
+// Everything rendered from data files goes through esc() before it touches
+// innerHTML, so a stray `<` or a malicious string in bikes.json /
+// bike-info.json can never become markup.
+const HTML_ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+function esc(value) {
+  return String(value ?? '').replace(/[&<>"']/g, (ch) => HTML_ESCAPES[ch]);
+}
+
+// Only absolute http(s) URLs are allowed as link targets (no javascript:,
+// data:, etc.). Returns the normalized href, or null if not allowed.
+function safeHttpUrl(href) {
+  try {
+    const url = new URL(href);
+    return url.protocol === 'http:' || url.protocol === 'https:' ? url.href : null;
+  } catch {
+    return null;
+  }
+}
+
+// Renders a note that may contain <a href="..."> links (e.g. the
+// geometryNote fields in bike-info.json) without ever injecting the string
+// as HTML. It's parsed into an inert document (DOMParser doesn't run
+// scripts or load resources), then rebuilt from scratch: text stays text,
+// <a> with an http(s) href becomes a fresh anchor carrying only its text,
+// and every other element is flattened to its text content.
+function appendRichText(target, source) {
+  const doc = new DOMParser().parseFromString(String(source ?? ''), 'text/html');
+  const walk = (node) => {
+    for (const child of node.childNodes) {
+      if (child.nodeType === Node.TEXT_NODE) {
+        target.appendChild(document.createTextNode(child.textContent));
+      } else if (child.nodeType === Node.ELEMENT_NODE) {
+        const href = child.tagName === 'A' ? safeHttpUrl(child.getAttribute('href')) : null;
+        if (href) {
+          const a = document.createElement('a');
+          a.href = href;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          a.textContent = child.textContent;
+          target.appendChild(a);
+        } else {
+          walk(child);
+        }
+      }
+    }
+  };
+  walk(doc.body);
+  return target;
+}
+
 function fmtMiles(km) {
   return (km * KM_TO_MI).toLocaleString(undefined, { maximumFractionDigits: 0 });
 }
@@ -62,11 +112,11 @@ function renderBike(bike, todayISO) {
   card.innerHTML = `
     <header class="bike-header">
       <div>
-        <h2>${bike.name}</h2>
-        <p class="bike-sub">${bike.fullName} · ${fmtMiles(bike.mileageKm)} mi · ${bike.totalActivities} rides</p>
-        ${nextUpText ? `<p class="bike-next">${nextUpText}</p>` : ''}
+        <h2>${esc(bike.name)}</h2>
+        <p class="bike-sub">${esc(bike.fullName)} · ${esc(fmtMiles(bike.mileageKm))} mi · ${esc(bike.totalActivities)} rides</p>
+        ${nextUpText ? `<p class="bike-next">${esc(nextUpText)}</p>` : ''}
       </div>
-      <span class="pill pill-${worst}">${statusLabel(worst)}</span>
+      <span class="pill pill-${esc(worst)}">${esc(statusLabel(worst))}</span>
     </header>
     <ul class="item-list"></ul>
   `;
@@ -77,14 +127,14 @@ function renderBike(bike, todayISO) {
     li.className = `item item-${item.status}`;
     li.innerHTML = `
       <div class="item-main">
-        <span class="item-label">${item.label}</span>
-        <span class="pill pill-${item.status} pill-sm">${statusLabel(item.status)}</span>
+        <span class="item-label">${esc(item.label)}</span>
+        <span class="pill pill-${esc(item.status)} pill-sm">${esc(statusLabel(item.status))}</span>
       </div>
-      <p class="item-desc">${item.description}</p>
-      ${item.note ? `<p class="item-note">${item.note}</p>` : ''}
+      <p class="item-desc">${esc(item.description)}</p>
+      ${item.note ? `<p class="item-note">${esc(item.note)}</p>` : ''}
       <div class="item-footer">
-        <p class="item-meta">${itemSubtext(item)}</p>
-        <button class="log-btn" data-bike="${bike.id}" data-item="${item.id}">Log done</button>
+        <p class="item-meta">${esc(itemSubtext(item))}</p>
+        <button class="log-btn" data-bike="${esc(bike.id)}" data-item="${esc(item.id)}">Log done</button>
       </div>
     `;
     list.appendChild(li);
@@ -98,32 +148,37 @@ function renderBikeInfo(bike) {
   card.className = 'bike-card';
 
   const geoRows = (bike.geometry ?? [])
-    .map((g) => `<div class="spec-row"><span class="spec-label">${g.label}</span><span class="spec-value">${g.value}</span></div>`)
+    .map((g) => `<div class="spec-row"><span class="spec-label">${esc(g.label)}</span><span class="spec-value">${esc(g.value)}</span></div>`)
     .join('');
 
   card.innerHTML = `
     <header class="bike-header">
       <div>
-        <h2>${bike.name}</h2>
-        <p class="bike-sub">${bike.fullName}${bike.year ? ` · ${bike.year}` : ''}${bike.type ? ` · ${bike.type}` : ''}</p>
+        <h2>${esc(bike.name)}</h2>
+        <p class="bike-sub">${esc(bike.fullName)}${bike.year ? ` · ${esc(bike.year)}` : ''}${bike.type ? ` · ${esc(bike.type)}` : ''}</p>
       </div>
     </header>
-    ${geoRows ? `<div class="spec-group"><h3 class="spec-heading">Geometry</h3><div class="spec-list">${geoRows}</div>${bike.geometryNote ? `<p class="geo-note">${bike.geometryNote}</p>` : ''}</div>` : ''}
+    ${geoRows ? `<div class="spec-group"><h3 class="spec-heading">Geometry</h3><div class="spec-list">${geoRows}</div>${bike.geometryNote ? '<p class="geo-note"></p>' : ''}</div>` : ''}
     <div class="spec-group">
       <h3 class="spec-heading">Build</h3>
       <ul class="build-list"></ul>
     </div>
-    ${bike.note ? `<p class="item-note">${bike.note}</p>` : ''}
+    ${bike.note ? `<p class="item-note">${esc(bike.note)}</p>` : ''}
   `;
+
+  // The geometry note carries source links, so it's built node-by-node
+  // (http(s) anchors only) rather than injected as HTML.
+  const geoNote = card.querySelector('.geo-note');
+  if (geoNote) appendRichText(geoNote, bike.geometryNote);
 
   const buildList = card.querySelector('.build-list');
   for (const part of bike.build ?? []) {
     const li = document.createElement('li');
     li.className = 'build-item';
     li.innerHTML = `
-      <span class="build-category">${part.category}</span>
-      <span class="build-spec">${part.spec}</span>
-      ${part.note ? `<span class="build-note">${part.note}</span>` : ''}
+      <span class="build-category">${esc(part.category)}</span>
+      <span class="build-spec">${esc(part.spec)}</span>
+      ${part.note ? `<span class="build-note">${esc(part.note)}</span>` : ''}
     `;
     buildList.appendChild(li);
   }
@@ -275,25 +330,78 @@ function initRefreshButton() {
   });
 }
 
+// /api/log requires a shared passphrase (LOG_PASSPHRASE on the server),
+// sent as the x-log-key header. It's asked for once and remembered in this
+// browser's localStorage; a 401 clears it and asks again.
+const LOG_KEY_STORAGE = 'bikeTracker.logKey';
+
+function getStoredLogKey() {
+  try {
+    return localStorage.getItem(LOG_KEY_STORAGE) || null;
+  } catch {
+    return null;
+  }
+}
+
+function storeLogKey(key) {
+  try {
+    if (key) localStorage.setItem(LOG_KEY_STORAGE, key);
+    else localStorage.removeItem(LOG_KEY_STORAGE);
+  } catch {
+    // localStorage unavailable — the key just won't be remembered.
+  }
+}
+
+function promptForLogKey(message) {
+  const entered = window.prompt(message);
+  const key = entered ? entered.trim() : '';
+  return key || null;
+}
+
+class LogCancelled extends Error {}
+
+async function postLog(bikeId, itemId) {
+  let key = getStoredLogKey() ?? promptForLogKey('Enter the logging passphrase:');
+  // One initial attempt plus one re-prompt after a 401.
+  for (let attempt = 0; attempt < 2; attempt++) {
+    if (!key) throw new LogCancelled();
+    const res = await fetch('/api/log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-log-key': key },
+      body: JSON.stringify({ bikeId, itemId }),
+    });
+    if (res.status === 401) {
+      storeLogKey(null);
+      if (attempt > 0) throw new Error('Passphrase not accepted');
+      key = promptForLogKey('Passphrase was not accepted. Try again:');
+      continue;
+    }
+    // Anything other than 401 means the passphrase was accepted.
+    storeLogKey(key);
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(json.error || `Request failed (${res.status})`);
+    return json;
+  }
+  throw new LogCancelled();
+}
+
 async function handleLogClick(btn) {
   const { bike: bikeId, item: itemId } = btn.dataset;
   btn.disabled = true;
   btn.textContent = 'Logging…';
   try {
-    const res = await fetch('/api/log', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ bikeId, itemId }),
-    });
-    const json = await res.json();
-    if (!res.ok) throw new Error(json.error || `Request failed (${res.status})`);
+    const json = await postLog(bikeId, itemId);
     const loggedBike = json.data.bikes.find((b) => b.id === bikeId);
     const loggedItem = loggedBike?.maintenanceItems.find((i) => i.id === itemId);
     if (loggedItem) rememberPendingLog(bikeId, itemId, loggedItem);
     renderAll(json.data);
   } catch (err) {
-    console.error('Failed to log item:', err);
-    btn.textContent = 'Failed — tap to retry';
+    if (err instanceof LogCancelled) {
+      btn.textContent = 'Log done';
+    } else {
+      console.error('Failed to log item:', err);
+      btn.textContent = 'Failed — tap to retry';
+    }
     btn.disabled = false;
   }
 }
