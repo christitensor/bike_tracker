@@ -1,5 +1,5 @@
 {
-  "lastSynced": "2026-10-30",
+  "lastSynced": "2026-10-31",
   "bikes": [
     {
       "id": "mog",
@@ -41,7 +41,7 @@
           "id": "bolt-torque",
           "lastServiceKm": 6158,
           "lastServiceDate": "2026-08-15",
-          "lastNotifiedStatus": "ok"
+          "lastNotifiedStatus": "due-soon"
         }
       ]
     },
@@ -82,7 +82,7 @@
           "id": "bolt-torque",
           "lastServiceKm": 2443,
           "lastServiceDate": "2026-08-15",
-          "lastNotifiedStatus": "ok"
+          "lastNotifiedStatus": "due-soon"
         },
         {
           "id": "fork-lowers",
