@@ -1,5 +1,5 @@
 {
-  "lastSynced": "2026-11-07",
+  "lastSynced": "2026-11-08",
   "bikes": [
     {
       "id": "mog",
@@ -51,8 +51,8 @@
       "fullName": "Scott Spark",
       "type": "full-suspension-mtb",
       "garminGearId": "28d1267dca1d4ecc8e263a224c472fed",
-      "mileageKm": 2965.4,
-      "totalActivities": 81,
+      "mileageKm": 3011.6,
+      "totalActivities": 82,
       "maintenanceItems": [
         {
           "id": "chain-wax",
