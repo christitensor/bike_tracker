@@ -56,9 +56,9 @@
       "maintenanceItems": [
         {
           "id": "chain-wax",
-          "lastServiceKm": 2811.6,
-          "lastServiceDate": "2026-10-18",
-          "lastNotifiedStatus": "overdue"
+          "lastServiceKm": 3084.2,
+          "lastServiceDate": "2026-11-11",
+          "lastNotifiedStatus": "ok"
         },
         {
           "id": "chain-wear",
