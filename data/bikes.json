@@ -68,9 +68,9 @@
         },
         {
           "id": "sealant-refresh",
-          "lastServiceKm": 2443,
-          "lastServiceDate": "2026-08-16",
-          "lastNotifiedStatus": "overdue"
+          "lastServiceKm": 3084.2,
+          "lastServiceDate": "2026-11-11",
+          "lastNotifiedStatus": "ok"
         },
         {
           "id": "brake-pads",
